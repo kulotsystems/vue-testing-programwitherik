@@ -4,6 +4,8 @@ import HomeView from '../views/HomeView.vue'
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import Secret from '../views/Secret.vue';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 Vue.use(VueRouter)
 
@@ -26,7 +28,10 @@ const routes = [
   {
     path: '/secret',
     name: 'secret',
-    component: Secret
+    component: Secret,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/about',
@@ -43,5 +48,16 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const isAuthenticated = firebase.auth().currentUser;
+  if(requiresAuth && !isAuthenticated) {
+    next('/login');
+  }
+  else {
+    next();
+  }
+});
 
 export default router
