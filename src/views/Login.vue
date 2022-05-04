@@ -37,6 +37,7 @@
                     await this.$router.replace({name: 'secret'});
                 }
                 catch(err) {
+                    this.error = err;
                     console.log(err);
                 }
             }
